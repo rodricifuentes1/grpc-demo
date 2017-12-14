@@ -8,7 +8,7 @@ package com.example;
 // protobuf messages
 // -----------------
 
-// request message
+// request messages
 message HelloWorldRequest {
     string name = 1;
 }
@@ -18,9 +18,23 @@ message HelloWorldResponse {
     string message = 1;
 }
 
+message GetUserRequest {
+    string userId = 1;
+}
+
+message GrpcUser {
+    string id = 1;
+    string name = 2;
+}
+
+message GetUserResponse {
+    GrpcUser user = 1;
+}
+
 // -------------
 // grpc-services
 // -------------
 service HelloWorld {
     rpc sayHello(HelloWorldRequest) returns (HelloWorldResponse);
+    rpc getUser(GetUserRequest) returns (GetUserResponse);
 }

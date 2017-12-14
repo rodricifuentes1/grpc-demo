@@ -1,11 +1,11 @@
 package com.example
 
-import com.example.helloworld.{ HelloWorldGrpc, HelloWorldRequest, HelloWorldResponse }
+import com.example.helloworld._
 import com.typesafe.scalalogging.LazyLogging
-import io.grpc.{ ManagedChannel, ManagedChannelBuilder }
+import io.grpc.{ManagedChannel, ManagedChannelBuilder}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ Await, Future }
+import scala.concurrent.{Await, Future}
 
 object GrpcClient extends App with LazyLogging {
   val serverAddress: String = "localhost"
@@ -30,6 +30,11 @@ object GrpcClient extends App with LazyLogging {
   // we're going to await for async response ONLY for demo purpose
   val asyncResponse: HelloWorldResponse = Await.result(asyncCall, 10.seconds)
   logger.info(s"ASYNC RESPONSE $asyncResponse")
+
+  // get user call
+  val asyncUserCall: Future[GetUserResponse] = helloWorldClient.getUser("1")
+  val asyncUserResponse: GetUserResponse = Await.result(asyncUserCall, 10.seconds)
+  logger.info(s"ASYNC USER RESPONSE $asyncUserResponse")
 }
 
 class HelloWorldClient(serverChannel: ManagedChannel) extends LazyLogging {
@@ -47,5 +52,11 @@ class HelloWorldClient(serverChannel: ManagedChannel) extends LazyLogging {
     logger.info("calling say hello (blocking)")
     val request = HelloWorldRequest(name)
     blockingStub.sayHello(request)
+  }
+
+  def getUser(id: String): Future[GetUserResponse] = {
+    logger.info("calling get user (monix task async)")
+    val request = GetUserRequest(id)
+    asyncStub.getUser(request)
   }
 }
