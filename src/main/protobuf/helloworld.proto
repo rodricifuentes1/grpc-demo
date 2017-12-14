@@ -1,0 +1,26 @@
+// protocol version 3
+syntax = "proto3";
+
+// package
+package com.example;
+
+// -----------------
+// protobuf messages
+// -----------------
+
+// request message
+message HelloWorldRequest {
+    string name = 1;
+}
+
+// response message
+message HelloWorldResponse {
+    string message = 1;
+}
+
+// -------------
+// grpc-services
+// -------------
+service HelloWorld {
+    rpc sayHello(HelloWorldRequest) returns (HelloWorldResponse);
+}
