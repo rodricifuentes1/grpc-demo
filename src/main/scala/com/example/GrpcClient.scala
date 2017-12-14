@@ -1,11 +1,12 @@
 package com.example
 
 import com.example.helloworld._
+import com.example.userservice.{ GetUserRequest, GetUserResponse, UserServiceGrpc }
 import com.typesafe.scalalogging.LazyLogging
-import io.grpc.{ManagedChannel, ManagedChannelBuilder}
+import io.grpc.{ ManagedChannel, ManagedChannelBuilder }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 object GrpcClient extends App with LazyLogging {
   val serverAddress: String = "localhost"
@@ -15,8 +16,9 @@ object GrpcClient extends App with LazyLogging {
     .usePlaintext(true)
     .build()
 
-  // client instance
-  val helloWorldClient: HelloWorldClient = new HelloWorldClient(serverChannel)
+  // client instances
+  val helloWorldClient: HelloWorldClient   = new HelloWorldClient(serverChannel)
+  val userServiceClient: UserServiceClient = new UserServiceClient(serverChannel)
 
   // blocking call
   val blockingCall: HelloWorldResponse = helloWorldClient.sayHelloBlocking("BLOCKING")
@@ -32,8 +34,8 @@ object GrpcClient extends App with LazyLogging {
   logger.info(s"ASYNC RESPONSE $asyncResponse")
 
   // get user call
-  val asyncUserCall: Future[GetUserResponse] = helloWorldClient.getUser("1")
-  val asyncUserResponse: GetUserResponse = Await.result(asyncUserCall, 10.seconds)
+  val asyncUserCall: Future[GetUserResponse] = userServiceClient.getUser("1")
+  val asyncUserResponse: GetUserResponse     = Await.result(asyncUserCall, 10.seconds)
   logger.info(s"ASYNC USER RESPONSE $asyncUserResponse")
 }
 
@@ -53,7 +55,10 @@ class HelloWorldClient(serverChannel: ManagedChannel) extends LazyLogging {
     val request = HelloWorldRequest(name)
     blockingStub.sayHello(request)
   }
+}
 
+class UserServiceClient(serverChannel: ManagedChannel) extends LazyLogging {
+  private val asyncStub = UserServiceGrpc.stub(serverChannel)
   def getUser(id: String): Future[GetUserResponse] = {
     logger.info("calling get user (monix task async)")
     val request = GetUserRequest(id)

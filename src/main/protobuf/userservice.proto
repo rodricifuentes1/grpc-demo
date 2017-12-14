@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package com.example;
+
+message GetUserRequest {
+    string userId = 1;
+}
+
+message GrpcUser {
+    string id = 1;
+    string name = 2;
+}
+
+message GetUserResponse {
+    GrpcUser user = 1;
+}
+
+service UserService {
+    rpc getUser(GetUserRequest) returns (GetUserResponse);
+}
