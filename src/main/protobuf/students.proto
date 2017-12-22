@@ -1,0 +1,31 @@
+// protocol version 3
+syntax = "proto3";
+
+// package
+package com.example;
+
+// -----------------
+// protobuf messages
+// -----------------
+
+// request message
+message GetStudentRequest {
+    int32 id = 1;
+}
+
+// response message
+message StudentProto {
+    int32 id = 1;
+    repeated double grades = 2;
+}
+
+message GetStudentResponse {
+    StudentProto student = 1;
+}
+
+// -------------
+// grpc-services
+// -------------
+service Students {
+    rpc getStudent(GetStudentRequest) returns (GetStudentResponse);
+}
