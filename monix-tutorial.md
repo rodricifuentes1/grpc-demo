@@ -7,7 +7,7 @@ We need to create a new GRPC service that given an student id returns a student 
 case class Student(id: Int, grades: Option[List[Double]])
 ```
 
-2. Create a scala DAO that "connects" to a external data source to look for:
+2. Create a Students DAO that "connects" to a external data source to look for:
 - A student given an Id
 `def getStudent(id: Int)(implicit ec: ExecutionContext): Future[Student]`
 
@@ -31,7 +31,7 @@ class StudentsDAO() {
 }
 ```
 
-3. Create a scala Repository that calls exposed services in the DAO and returns the user using a monix task
+3. Create a Students Repository that calls exposed services in the DAO and returns the Student using a monix task
 ```scala
 package com.example
 
@@ -54,7 +54,7 @@ class StudentsRepo() {
 }
 ```
 
-4. Create a new students gpc-service to that queries one studen given its id
+4. Create a new Students gpc-service that queries one student given its id
 
 - Create proto file (messages and service)
 ```
